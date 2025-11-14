@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ati_setup">
+
+  <!-- Load YAML file -->
+  <xacro:property name="ati_setup_config" value="$(find asystr_dual_arm_model)/config/ati_setup.yaml"/>
+  <xacro:property name="frames" value="${xacro.load_yaml(ati_setup_config)['frames']}"/>
+
+  <!-- Tray object -->
+  <link name="ati_tray">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/ati_tray.dae"
+              scale="0.00135 0.00135 0.00135"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="base_to_tray" type="floating">
+    <parent link="${frames['ati_tray']['parent']}"/>
+    <child link="ati_tray"/>
+    <origin
+      xyz="${frames['ati_tray']['xyz'][0]} ${frames['ati_tray']['xyz'][1]} ${frames['ati_tray']['xyz'][2]}"
+      rpy="${frames['ati_tray']['rpy'][0]} ${frames['ati_tray']['rpy'][1]} ${frames['ati_tray']['rpy'][2]}"/>
+  </joint>
+
+  <!-- Shelf object -->
+  <link name="ati_shelf">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/ati_shelf.dae"
+              scale="0.0135 0.0135 0.0135"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="base_to_shelf" type="fixed">
+    <parent link="${frames['ati_shelf']['parent']}"/>
+    <child link="ati_shelf"/>
+    <origin
+      xyz="${frames['ati_shelf']['xyz'][0]} ${frames['ati_shelf']['xyz'][1]} ${frames['ati_shelf']['xyz'][2]}"
+      rpy="${frames['ati_shelf']['rpy'][0]} ${frames['ati_shelf']['rpy'][1]} ${frames['ati_shelf']['rpy'][2]}"/>
+  </joint>
+
+</robot>

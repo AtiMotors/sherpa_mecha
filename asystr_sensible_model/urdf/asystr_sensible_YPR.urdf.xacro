@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<robot name="asystr_sensible_YPR" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="setup" default="full" />
+
+    <xacro:arg name="config" default="YPR" />
+
+    <xacro:arg name="chiral" default="no" />
+
+    <xacro:arg name="ns" default="" />
+
+    <xacro:property name="config" value="$(eval config)" />
+
+    <xacro:if value="$(eval setup == 'full' or setup == 'wrist')">
+
+        <xacro:property name="ns" value="$(eval ns)" />
+
+        <xacro:property name="chiral" value="$(eval -1.0 if chiral == 'yes' else 1.0)" />
+
+    </xacro:if>
+
+    <!-- Import dependency files -->
+
+    <xacro:property name="YPR_config" value="$(find asystr_sensible_model)/config/YPR_config.yaml" />
+
+    <xacro:property name="YPR_DH" value="${xacro.load_yaml(YPR_config)['DH']}" />
+
+    <xacro:include filename="$(find asystr_sensible_model)/urdf/plugin/dh_plugin.urdf.xacro" />
+
+    <xacro:if value="$(eval setup == 'full' or setup == 'dual_arm')">
+        
+        <xacro:include filename="$(find asystr_sensible_model)/urdf/asystr_sensible.urdf.xacro" />
+
+        <xacro:property name="base_link" value="wrist_adapter" />
+
+    </xacro:if>
+
+    <xacro:if value="$(eval setup == 'wrist')">
+
+        <xacro:property name="base_link" value="base_link" />
+
+        <xacro:Li name="base_link"></xacro:Li>
+
+    </xacro:if>
+
+    <!-- Create Links -->
+
+    <xacro:Li name="link_4" visual="YPR/wrist_roll" collision="YPR/wrist_roll"></xacro:Li>
+
+    <xacro:Li name="link_5" visual="YPR/differential" collision="YPR/differential"></xacro:Li>
+
+    <xacro:Li name="link_6" visual="YPR/flange" collision="YPR/flange" flip_y="${-1.0 * chiral}"></xacro:Li>
+
+    <!-- Create Joints -->
+
+    <xacro:Ji name="joint_4" parent="${base_link}" child="link_4" DH="${YPR_DH['J4']}" type="continuous"></xacro:Ji>
+
+    <xacro:Ji name="joint_5" parent="link_4" child="link_5" DH="${YPR_DH['J5']}" type="revolute" lower='0.0' upper='${pi}'></xacro:Ji>
+
+    <xacro:Ji name="joint_6" parent="link_5" child="link_6" DH="${YPR_DH['J6']}" type="continuous"></xacro:Ji>
+
+</robot>

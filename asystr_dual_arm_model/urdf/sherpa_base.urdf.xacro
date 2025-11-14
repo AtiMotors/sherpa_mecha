@@ -1,0 +1,482 @@
+<?xml version="1.0"?>
+
+<robot name="sherpa_base" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="wheelbase" default="0.4797" />  <!-- distance front-back -->
+  <xacro:arg name="track" default="0.426" />  <!-- distance left-right -->
+  <xacro:arg name="wheel_mass" default="1.0" />
+  <xacro:arg name="base_mass" default="15.0" />
+
+  <!-- Derived positions -->
+  <xacro:property name="x_front" value="$(eval wheelbase/2.0)" />
+  <xacro:property name="x_back" value="$(eval -wheelbase/2.0)" />
+  <xacro:property name="y_left" value="$(eval track/2.0)" />
+  <xacro:property name="y_right" value="$(eval -track/2.0)" />
+
+  <link name="base_link" />
+  <joint name="footprint_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="base_footprint" />
+    <origin xyz="0 0 0.026" rpy="0 0 0" />
+  </joint>
+
+  <!-- Sherpa Chasis -->
+
+  <link name="base_footprint">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_chassis.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_chassis.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Front Left Wheel -->
+
+  <link name="front_left_wheel_base">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel_base.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel_base.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="front_left_wheel_base_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="front_left_wheel_base" />
+    <origin xyz="${x_front} ${y_left} 0.16" rpy="0 ${-pi/2} 0" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="front_left_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="front_left_wheel_joint" type="continuous">
+    <parent link="front_left_wheel_base" />
+    <child link="front_left_wheel" />
+    <origin xyz="-0.11 0 0" rpy="0 0 ${-pi/2}" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <!-- Front Right Wheel -->
+
+  <link name="front_right_wheel_base">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="${pi} ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel_base.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="${pi} ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel_base.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="front_right_wheel_base_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="front_right_wheel_base" />
+    <origin xyz="${x_front} ${y_right} 0.16" rpy="0 ${pi/2} 0" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="front_right_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="front_right_wheel_joint" type="continuous">
+    <parent link="front_right_wheel_base" />
+    <child link="front_right_wheel" />
+    <origin xyz="0.11 0 0" rpy="0 0 ${pi/2}" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <!-- Rear Left Wheel -->
+
+  <link name="rear_left_wheel_base">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 ${-pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel_base.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 ${-pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel_base.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+
+  </link>
+
+  <joint name="rear_left_wheel_base_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="rear_left_wheel_base" />
+    <origin xyz="${x_back} ${y_left} 0.16" rpy="0 ${pi/2} 0" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="rear_left_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 ${-pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="rear_left_wheel_joint" type="continuous">
+    <parent link="rear_left_wheel_base" />
+    <child link="rear_left_wheel" />
+    <origin xyz="0.11 0 0" rpy="0 0 ${pi/2}" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <!-- Rear Right Wheel -->
+
+  <link name="rear_right_wheel_base">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="${pi} ${-pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel_base.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="${pi} ${-pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel_base.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="rear_right_wheel_base_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="rear_right_wheel_base" />
+    <origin xyz="${x_back} ${y_right} 0.16" rpy="0 ${-pi/2} 0" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="rear_right_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_wheel.dae"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_wheel.stl"
+          scale="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="rear_right_wheel_joint" type="continuous">
+    <parent link="rear_right_wheel_base" />
+    <child link="rear_right_wheel" />
+    <origin xyz="-0.11 0 0" rpy="0 0 ${pi/2}" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="telescopic_base">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_tele_base.dae"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_tele_base.stl"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="telescopic_base_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="telescopic_base" />
+    <origin xyz="0 0 0.253" rpy="0 0 0" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="telescopic_mid">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_tele_mid.dae"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_tele_mid.stl"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="telescopic_mid_joint" type="prismatic">
+    <parent link="telescopic_base" />
+    <child link="telescopic_mid" />
+    <origin xyz="0 0 0.077" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.02" upper="0.47" effort="100.0" velocity="0.1" />
+  </joint>
+
+  <link name="sherpa_body">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_tele_body.dae"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_tele_body.stl"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="sherpa_body_joint" type="prismatic">
+    <parent link="telescopic_mid" />
+    <child link="sherpa_body" />
+    <origin xyz="0 0 0.04" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.02" upper="0.47" effort="100.0" velocity="0.1" />
+  </joint>
+
+  <link name="sherpa_head_yaw" />
+
+  <joint name="sherpa_body_yaw_joint" type="revolute">
+    <parent link="sherpa_body" />
+    <child link="sherpa_head_yaw" />
+    <origin xyz="0 0 0.76" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="${-pi/4}" upper="${pi/4}" effort="100.0" velocity="0.1" />
+  </joint>
+
+  <link name="sherpa_head">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.01" />
+      <inertia
+        ixx="0.01" ixy="0.0" ixz="0.0"
+        iyy="0.01" iyz="0.0"
+        izz="0.01" />
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/visual/sherpa_head.dae"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://asystr_dual_arm_model/meshes/collision/sherpa_head.stl"
+          scale="0.01 0.01 0.01" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="sherpa_body_tilt_joint" type="revolute">
+    <parent link="sherpa_head_yaw" />
+    <child link="sherpa_head" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="${-pi/6}" upper="${pi/6}" effort="100.0" velocity="0.1" />
+  </joint>
+
+</robot>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<robot name="sherpa_dual_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="setup" default="dual_arm" />
+    <xacro:arg name="config" default="RPR" />
+
+    <xacro:include
+        filename="$(find asystr_dual_arm_model)/urdf/sherpa_base.urdf.xacro" />
+
+    <!-- Left arm -->
+    <xacro:property name="ns" value="left_" />
+    <xacro:property name="chiral" value="1.0" />
+    <xacro:include
+        filename="$(find asystr_sensible_model)/urdf/asystr_sensible_$(eval config).urdf.xacro" />
+
+    <joint name="sherpa_body_to_left" type="fixed">
+        <parent link="sherpa_body" />
+        <child link="${ns}base_link" />
+        <origin xyz="0.0 0.28 0.575" rpy="${pi} 0 0" />
+    </joint>
+
+    <!-- Right arm -->
+    <xacro:property name="ns" value="right_" />
+    <xacro:property name="chiral" value="-1.0" />
+    <xacro:include
+        filename="$(find asystr_sensible_model)/urdf/asystr_sensible_$(eval config).urdf.xacro" />
+
+    <joint name="sherpa_body_to_right" type="fixed">
+        <parent link="sherpa_body" />
+        <child link="${ns}base_link" />
+        <origin xyz="0.0 -0.28 0.575" rpy="${pi} 0 0" />
+    </joint>
+
+
+</robot>

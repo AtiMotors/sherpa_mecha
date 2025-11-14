@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot name="dual_arm" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="setup" default="dual_arm" />
+    <xacro:arg name="config" default="RPR" />
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://asystr_dual_arm_model/meshes/visual/ati_vehicle.dae"
+                       scale="0.0018 0.0018 0.0018" />
+            </geometry>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://asystr_dual_arm_model/meshes/collision/ati_vehicle.stl"
+                       scale="0.0018 0.0018 0.0018" />
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Left arm -->
+    <xacro:property name="ns" value="left_" />
+    <xacro:property name="chiral" value="1.0" />
+    <xacro:include filename="$(find asystr_sensible_model)/urdf/asystr_sensible_$(eval config).urdf.xacro" />
+
+    <joint name="base_to_left" type="fixed">
+        <parent link="base_link" />
+        <child link="${ns}base_link" />
+        <origin xyz="0.76 0.28 1.475" rpy="${pi} 0 0" />
+    </joint>
+
+    <!-- Right arm -->
+    <xacro:property name="ns" value="right_" />
+    <xacro:property name="chiral" value="-1.0" />
+    <xacro:include filename="$(find asystr_sensible_model)/urdf/asystr_sensible_$(eval config).urdf.xacro" />
+
+    <joint name="base_to_right" type="fixed">
+        <parent link="base_link" />
+        <child link="${ns}base_link" />
+        <origin xyz="0.76 -0.28 1.475" rpy="${pi} 0 0" />
+    </joint>
+
+    <!-- Include ATI setup (tray + shelf etc. from YAML) -->
+    <xacro:include filename="$(find asystr_dual_arm_model)/urdf/ati_setup.urdf.xacro" />
+
+</robot>

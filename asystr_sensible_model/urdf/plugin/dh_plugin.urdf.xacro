@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<robot name="dh_common" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="ns" default="" />
+
+    <xacro:macro name="Li" params="name:='' visual:='' collision:='' flip_x:=1.0 flip_y:=1.0 flip_z:=1.0">
+        <link name="${ns}${name}">
+
+            <xacro:if value="${visual != ''}">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0" />
+                    <geometry>
+                        <mesh filename="package://asystr_sensible_model/meshes/visual/${visual}.dae" scale="${0.001*float(flip_x)} ${0.001*float(flip_y)} ${0.001*float(flip_z)}"/>
+                    </geometry>
+                </visual>
+            </xacro:if>
+            
+            <xacro:if value="${collision != ''}">
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0" />
+                    <geometry>
+                        <mesh filename="package://asystr_sensible_model/meshes/collision/${collision}.stl" scale="${0.001*float(flip_x)} ${0.001*float(flip_y)} ${0.001*float(flip_z)}"/>
+                    </geometry>
+                </collision>
+            </xacro:if>
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0.01"/>
+                <inertia
+                    ixx="0.01" ixy="0.0" ixz="0.0"
+                    iyy="0.01" iyz="0.0"
+                    izz="0.01"/>
+            </inertial>
+
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="Ji" params="name parent child DH type:='continuous' lower:='${-pi}' upper:='${pi}' ">
+        <joint name="${ns}${name}" type="${type}">
+            <parent link="${ns}${parent}" />
+            <child link="${ns}${child}" />
+            
+            <origin xyz="${DH['a']} ${-DH['d']*sin(DH['alpha'])} ${DH['d']*cos(DH['alpha'])}"
+                rpy="${DH['alpha']} ${-(DH['theta'])*sin(DH['alpha'])} ${(DH['theta'])*cos(DH['alpha'])}" />
+            
+            <xacro:if value="${type != 'fixed'}">
+                <axis xyz="0 0 1" />
+                <limit effort="100.0" lower="${lower}" upper="${upper}" velocity="100.0"/>
+            </xacro:if>
+
+        </joint>
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,12 @@
+frames:
+  ati_tray:
+    parent: "base_link"
+    xyz: [1.214, 0.0, 0.135]
+    rpy: [0.0, 0.0, 1.5708]
+    quat: [0.0, 0.0, 0.7071, 0.7071]
+
+  ati_shelf:
+    parent: "base_link"
+    xyz: [1.214, 0.0, 0.115]
+    rpy: [0.0, 0.0, 1.5708]
+    quat: [0.0, 0.0, 0.7071, 0.7071]

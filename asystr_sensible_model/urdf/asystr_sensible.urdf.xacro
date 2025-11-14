@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<robot name="asystr_sensible" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="setup" default="base" />
+
+    <xacro:arg name="config" default="" />
+
+    <xacro:arg name="chiral" default="no" />
+
+    <xacro:arg name="ns" default="" />
+
+    <xacro:if value="$(eval setup == 'base')">
+
+        <xacro:property name="ns" value="$(eval ns)" />
+
+        <xacro:property name="config" value="$(eval config)" />
+
+        <xacro:property name="chiral" value="$(eval -1.0 if chiral == 'yes' else 1.0)" />
+
+    </xacro:if>
+
+    <!-- Import dependency files -->
+
+    <xacro:property name="asystr_sensible_config" value="$(find asystr_sensible_model)/config/asystr_sensible_config.yaml" />
+
+    <xacro:property name="asystr_DH" value="${xacro.load_yaml(asystr_sensible_config)['DH']}" />
+
+    <xacro:include filename="$(find asystr_sensible_model)/urdf/plugin/dh_plugin.urdf.xacro" />
+
+    <!-- Create Links -->
+
+    <xacro:Li name="base_link" visual="asystr_sensible/base_link" collision="asystr_sensible/base_link" flip_y="${chiral}"></xacro:Li>
+
+    <xacro:Li name="link_1" visual="asystr_sensible/link_1" collision="asystr_sensible/link_1" flip_y="${chiral}" ></xacro:Li>
+
+    <xacro:Li name="link_2" visual="asystr_sensible/link_2" collision="asystr_sensible/link_2" flip_z="${chiral}"></xacro:Li>
+
+    <xacro:Li name="link_3" visual="asystr_sensible/link_3" collision="asystr_sensible/link_3" flip_z="${chiral}"></xacro:Li>
+
+    <xacro:if value="$(eval setup == 'base')">
+
+        <xacro:Li name="wrist_adapter"></xacro:Li>
+
+    </xacro:if>
+
+    <xacro:if value="$(eval setup != 'base')">
+
+        <xacro:Li name="wrist_adapter" visual="${config}/wrist_adapter" collision="${config}/wrist_adapter"></xacro:Li>
+
+    </xacro:if>
+
+    <!-- Create Joints -->
+
+    <xacro:Ji name="joint_1" parent="base_link" child="link_1" DH="${asystr_DH['J1']}" type="continuous"></xacro:Ji>
+
+    <xacro:Ji name="joint_2" parent="link_1" child="link_2" DH="${asystr_DH['J2']}" type="revolute" lower='${-7*pi/6}' upper='0.0'></xacro:Ji>
+
+    <xacro:Ji name="joint_3" parent="link_2" child="link_3" DH="${asystr_DH['J3']}" type="revolute" lower='0.0' upper='${pi}'></xacro:Ji>
+
+    <xacro:Ji name="wrist_frame" parent="link_3" child="wrist_adapter" DH="${asystr_DH['WA']}" type="fixed"></xacro:Ji>
+
+</robot>
